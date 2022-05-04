@@ -1,0 +1,309 @@
+Write an ALP to determine how many times “e” exists in “exercise”
+Code: 
+;SUKUMAR REDDY REVERSE CODE
+DATA SEGMENT
+ STRING1 DB 'EXERCISE'
+ COUNT DB 00H
+ DATA ENDS 
+ CODE SEGMENT
+ ASSUME CS:CODE, DS:DATA
+ START:
+ MOV AX, DATA
+ MOV DS, AX
+ LEA SI, STRING1
+ MOV CX, 08H
+ CLD
+ MOV AL, 'E'
+ BACK:CMP AL, [SI]
+ JZ SKIP
+ DEC COUNT
+ SKIP:INC COUNT
+ INC SI
+ LOOP BACK
+ INT 03H
+ CODE ENDS
+END START
+######################################################################################################################
+Write an ALP to reverse the string and print the reversed string. Ex
+              Input: String : "Geeks for Geeks"
+              Output: skeeG rof skeg
+Code: 
+;SUKUMAR REDDY REVERSE CODE
+DATA SEGMENT
+ STRING1 DB 'GEEKS FOR GEEKS'
+ DATA ENDS
+EXTRA SEGMENT
+ STRING2 DB 0FH DUP?
+ EXTRA ENDS
+CODE SEGMENT
+ ASSUME CS:CODE DS:DATA ES:EXTRA
+ START:
+ MOV AX,DATA
+ MOV DS,AX
+ MOV AX,EXTRA
+ MOV ES,AX
+ LEA SI,STRING1
+ LEA DI,STRING2+0EH
+ MOV CX,000FH
+ BACK:
+ CLD
+ LODSB
+ STD
+ STOSB
+ LOOP BACK
+ INT 03H
+ CODE ENDS
+END START
+#################################################################################################################################################
+: Write an ALP to SORT a series of 10 numbers from 20,000H in ascending order.
+
+Code:
+Code is not working at 20,000H memory location, so considered written code at 2000H memory location.
+;SUKUMAR REDDY SORTING
+CODE SEGMENT
+ START:
+ MOV AX,2000H
+ MOV DS,AX
+ MOV DI,0000H
+ MOV CX,0AH 
+ BACK:
+ MOV [DI],CX
+
+ INC DI
+ LOOP BACK
+ MOV SI,0000H
+ MOV DX,0AH
+ MOV CX,DX 
+ loop1:
+ MOV CX,DX 
+ MOV DI,SI 
+ loop2:
+ MOV AX,[SI]
+ MOV BX,[DI] 
+ CMP AX,BX 
+ JC SKIP 
+ JZ SKIP 
+ MOV [DI],AL
+ MOV [SI],BL 
+ SKIP: INC DI
+ LOOP loop2 
+ INC SI 
+ DEC DX 
+ MOV CX,DX
+ LOOP loop1
+ INT 03H 
+ CODE ENDS 
+END START
+##########################################################################################################################################
+Write an ALP to Convert a Decimal Number into Hexadecimal. Assume the 
+Decimal Number is stored at 24000H. Store the result at 24001H
+
+Code: 
+DECIMAL TO HEXADECIMAL OF STRING BY SUKUMAR REDDY GODALA
+CODE SEGMENT
+ ASSUME CS:CODE
+ START:
+ MOV AX,2400H
+ MOV DS,AX 
+ MOV SI,0000H
+ MOV [SI],85H
+ MOV AL,[SI]
+ MOV AH,AL
+ AND AH,0FH
+ MOV BL,AH
+ AND AL,0F0H
+ MOV CL,04
+ ROR AL,CL
+ MOV BH,0AH
+ MUL BH
+ ADD AL,BL
+ MOV [0001H],AL
+ INT 21H
+ CODE ENDS
+END START
+#############################################################################################################################################
+: Write an ALP to given string is palindrome or not.
+
+CODE:
+;PALINDROME OF STRING BY SUKUMAR REDDY GODALA
+DATA SEGMENT
+        STRING1 DB 25H, 34H, 63H, 77H, 63H, 34H, 25H
+        PAL DB 00H
+        DATA ENDS
+    EXTRA SEGMENT
+        STRING2 DB 07 DUP ?
+        EXTRA ENDS
+    
+    CODE SEGMENT
+        ASSUME CS:CODE, DS:DATA, ES:EXTRA
+        START:
+        MOV AX, DATA
+        MOV DS, AX
+        MOV AX, EXTRA
+        MOV ES, AX
+        
+        LEA SI, STRING1
+        LEA DI, STRING2 + 06H
+        MOV CX, 07H
+        
+        BACK:CLD
+        LODSB
+        STD
+        STOSB
+        LOOP BACK
+        
+        LEA SI, STRING1
+        LEA DI, STRING2
+        MOV CX, 07H
+        CLD
+        REPE CMPSB
+        JNZ SKIP
+        INC PAL
+        SKIP:INT 03H
+        CODE ENDS
+    END START
+#########################################################################################################
+Question-18 : Write a program for 8 bit addition taking inputs from user and displaying output on screen.
+Code: DATA SEGMENT
+    MSGH1 DB 0DH,0AH, "WAP FOR TWO 8 BIT ADDITION, USER INPUT $ " 
+    MSGH2 DB 0DH,0AH, "-------------------------------------- $ "
+    
+    
+    MSG1 DB 0DH,0AH, "PLEASE ENTER THE 1ST NUMBER:  $ "
+    MSG2 DB 0DH,0AH, "PLEASE ENTER THE 2ND NUMBER:  $ "  
+    MSG3 DB 0DH,0AH, "SUM:  $ "
+    MSG4 DB 0DH,0AH, "CARRY:  $ "               
+    
+    A DB ?
+    B DB ?
+    SUM DB ?
+    CARRY DB 00H
+DATA ENDS               
+
+CODE SEGMENT 
+    ASSUME CS: CODE, DS: DATA
+
+START: 
+    MOV AX,DATA    ; INITIALIZE DS
+    MOV DS,AX
+    
+    MOV AH,09H     ; DISPLAY HEADERS
+    LEA DX,MSGH1
+    INT 21H
+    LEA DX,MSGH2
+    INT 21H
+    
+    MOV AH,09H   ; ASK FOR 1ST NUMBER
+    LEA DX, MSG1
+    INT 21H
+    CALL BAGET8
+    MOV A,AL  
+    
+    MOV AH,09H   ; ASK FOR 2ND NUMBER
+    LEA DX, MSG2
+    INT 21H
+    CALL BAGET8
+    MOV B,AL   
+    
+    
+    MOV AL,A    ; TAKE 1ST NUMBER INTO A 
+    ADD AL,B    ; ADD 2ND NUMBER TO A
+    JNC SKIP    
+    INC CARRY
+    SKIP: MOV SUM, AL
+    
+    MOV AH, 09H  ; DISPLAY SUM
+    LEA DX, MSG3
+    INT 21H
+    LEA SI, SUM
+    CALL BAPUT8
+    
+    MOV AH, 09H  ; DISPLAY CARRY
+    LEA DX, MSG4
+    INT 21H
+    LEA SI, CARRY
+    CALL BAPUT8   
+    
+    MOV AH,4CH    ; END THE PROGRAM, GO BACK TO DOS
+    INT 21H                              
+    
+    
+    PROC BAGET8          ;  GETS AN 8 BIT NUMBER FROM THE SCREEN
+        PUSH CX
+        MOV AH,01H
+        INT 21H
+        SUB AL,30H
+        CMP AL,09H
+        JLE G1
+        SUB AL, 07H
+     G1:MOV CL, 04H
+        ROL AL, CL
+        MOV CH, AL
+        
+        
+        MOV AH,01H
+        INT 21H
+        SUB AL,30H
+        CMP AL,09H
+        JLE G2
+        SUB AL, 07H
+     G2:ADD AL, CH
+        POP CX
+        RET
+    ENDP  BAGET8      =
+                  
+                  
+    PROC BAPUT8            ; DISPLAY 8 BIT NUMBER ON SCREEN
+        PUSH CX
+        MOV AL,[SI]
+        AND AL, 0F0H
+        MOV CL, 04H
+        ROL AL, CL
+        ADD AL, 30H
+        CMP AL, 39H
+        JLE P1
+        ADD AL, 07H
+     P1:MOV AH, 02H
+        MOV DL, AL
+        INT 21H    
+        MOV AL,[SI]
+        AND AL, 0FH
+        ADD AL, 30H
+        CMP AL, 39H
+        JLE P2
+        ADD AL, 07H
+     P2:MOV AH, 02H
+        MOV DL, AL
+        INT 21H 
+        POP CX
+        RET
+    ENDP  BAPUT8   
+    
+    CODE ENDS
+    END START
+##########################################################################################################
+Write a program along with opcode to sum of two 8 bit numbers for 8085 Hardware kit.
+i)reset
+ii) press (real examine) 
+iii)Enter 2000 then press (next) //entering address 2000  //then it will print data address 
+iv)enter 3E press (next)
+v)enter 08 press(next)
+vi)enter 06 press (next)
+vii)enter 06 press (next)
+viii)enter 82 press (next)
+ix)enter 32 press (next)
+x)enter 50 press (next)
+xi)enter 20 press (next)
+xii)enter 76 press (fill)
+xiii)press "GO"
+xiv)enter 2000 press (fill) // it should show E on screen
+xv)press reset
+xvi)press examinne
+xvii)enter 2050 press (next)
+############################################################################################################
+Hexa code
+3E H,08 H        | MVI A,08H
+06 H,06 H        | MVI B,06H
+80H              | ADD B
+32H,50 H,20 H    | STA 2050
+76H              | HLT
